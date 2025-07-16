@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -8,12 +7,13 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) {
-      return const Scaffold(
-        body: Center(child: Text('Not logged in')),
-      );
-    }
+    final uid = 'uZsYmasM5B3dVXTYjt3J';
+    // final uid = FirebaseAuth.instance.currentUser?.uid;
+    // if (uid == null) {
+    //   return const Scaffold(
+    //     body: Center(child: Text('Not logged in')),
+    //   );
+    // }
 
     final now = DateTime.now();
     final monthStart = DateTime(now.year, now.month, 1);
