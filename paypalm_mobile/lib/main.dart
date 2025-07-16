@@ -6,16 +6,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  runApp(const PalmPayApp());
+  runApp(const PayPalmApp());
 }
 
-class PalmPayApp extends StatelessWidget {
-  const PalmPayApp({super.key});
+class PayPalmApp extends StatelessWidget {
+  const PayPalmApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PalmPay',
+      title: 'PayPalm',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.indigo,
