@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../navigation_panel.dart';
 import 'financial_dashboard_screen.dart';
 import 'bank_management_screen.dart';
@@ -15,11 +16,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = const [
-    DashboardScreen(),
-    BankManagementScreen(),
-    TransactionHistoryScreen(),
-    ProfileScreen(),
+ // String? get uid => FirebaseAuth.instance.currentUser?.uid;
+  String get uid => 'uZsYmasM5B3dVXTYjt3J';
+
+  List<Widget> get _pages => [
+    DashboardScreen(uid: uid),
+    BankManagementScreen(uid: uid),
+    TransactionHistoryScreen(uid: uid),
+    ProfileScreen(uid: uid),
   ];
 
   void _onItemTapped(int index) {
@@ -30,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('Current UID: $uid');
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: NavigationPanel(

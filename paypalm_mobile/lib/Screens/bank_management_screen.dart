@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import '../Services/bank_account_service.dart';
 
 class BankManagementScreen extends StatelessWidget {
-  const BankManagementScreen({super.key});
+  final String uid;
+  const BankManagementScreen({super.key, required this.uid});
 
   @override
   Widget build(BuildContext context) {
-    final uid = 'uZsYmasM5B3dVXTYjt3J';
     final accountsRef = FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
@@ -185,136 +186,9 @@ class BankManagementScreen extends StatelessWidget {
         icon: const Icon(Icons.add),
         label: const Text('Add Account'),
         onPressed: () {
-          showDialog(
-            context: context,
-            builder: (ctx) => _AddAccountDialog(accountsRef: accountsRef),
-          );
+          showAddBankAccountDialog(context, accountsRef);
         },
       ),
-    );
-  }
-}
-
-class _AddAccountDialog extends StatefulWidget {
-  final CollectionReference accountsRef;
-  const _AddAccountDialog({required this.accountsRef});
-
-  @override
-  State<_AddAccountDialog> createState() => _AddAccountDialogState();
-}
-
-class _AddAccountDialogState extends State<_AddAccountDialog> {
-  final _formKey = GlobalKey<FormState>();
-  String _bankName = 'CIMB';
-  String _accountType = 'Savings';
-  double _balance = 0;
-
-  final List<String> _banks = [
-    'CIMB',
-    'Maybank',
-    'Public Bank',
-    'Hong Leong Bank',
-    'RHB Bank',
-    'Bank Islam',
-    'BSN',
-    'UOB',
-    'HSBC'
-  ];
-  final List<String> _accountTypes = ['Savings', 'Current', 'Credit'];
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Add Linked Account'),
-      content: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 16),
-              TextFormField(
-                readOnly: true,
-                decoration: const InputDecoration(
-                  labelText: 'Bank Name',
-                  suffixIcon: Icon(Icons.arrow_drop_down),
-                ),
-                controller: TextEditingController(text: _bankName),
-                onTap: () async {
-                  final selected = await showDialog<String>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('Select Bank'),
-                      content: SizedBox(
-                        width: double.maxFinite,
-                        height: 300,
-                        child: ListView(
-                          children: _banks.map((bank) {
-                            return RadioListTile<String>(
-                              title: Text(bank),
-                              value: bank,
-                              groupValue: _bankName,
-                              onChanged: (val) {
-                                Navigator.pop(ctx, val);
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  );
-                  if (selected != null) setState(() => _bankName = selected);
-                },
-              ),
-              DropdownButtonFormField<String>(
-                value: _accountType,
-                decoration: const InputDecoration(labelText: 'Account Type'),
-                items: _accountTypes
-                    .map((type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(type),
-                        ))
-                    .toList(),
-                onChanged: (val) {
-                  if (val != null) setState(() => _accountType = val);
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Balance'),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                validator: (v) {
-                  if (v == null || v.isEmpty) return 'Enter balance';
-                  final val = double.tryParse(v);
-                  if (val == null) return 'Enter a valid number';
-                  return null;
-                },
-                onSaved: (v) => _balance = double.tryParse(v ?? '0') ?? 0,
-              ),
-            ],
-          ),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            if (_formKey.currentState?.validate() ?? false) {
-              _formKey.currentState?.save();
-              await widget.accountsRef.add({
-                'bankName': _bankName,
-                'accountType': _accountType,
-                'balance': _balance,
-                'isDefault': false,
-              });
-              Navigator.pop(context);
-            }
-          },
-          child: const Text('Add'),
-        ),
-      ],
     );
   }
 }

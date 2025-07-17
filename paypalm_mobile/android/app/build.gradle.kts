@@ -5,10 +5,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+import java.util.Properties
+
 android {
     namespace = "com.paypalm_mobile"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973" // <-- Set the required NDK version
+    ndkVersion = "27.0.12077973" //
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -21,15 +23,31 @@ android {
 
     defaultConfig {
         applicationId = "com.paypalm_mobile"
-        minSdk = flutter.minSdkVersion
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            val props = Properties()
+            project.rootProject.file("local.properties").inputStream().use { props.load(it) }
+
+            val keystorePathValue = props["KEYSTORE_PATH"] ?: throw GradleException("KEYSTORE_PATH is missing in local.properties")
+            val keystorePasswordValue = props["KEYSTORE_PASSWORD"] ?: throw GradleException("KEYSTORE_PASSWORD is missing in local.properties")
+            val keyAliasValue = props["KEY_ALIAS"] ?: throw GradleException("KEY_ALIAS is missing in local.properties")
+            val keyPasswordValue = props["KEY_PASSWORD"] ?: throw GradleException("KEY_PASSWORD is missing in local.properties")
+
+            storeFile = file(keystorePathValue as String)
+            storePassword = keystorePasswordValue as String
+            keyAlias = keyAliasValue as String
+            keyPassword = keyPasswordValue as String
+        }
+    }
     buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("debug")
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
