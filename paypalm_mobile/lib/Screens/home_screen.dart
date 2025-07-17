@@ -18,12 +18,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
  // String? get uid => FirebaseAuth.instance.currentUser?.uid;
   String get uid => 'uZsYmasM5B3dVXTYjt3J';
+  String get email => FirebaseAuth.instance.currentUser?.email ?? '';
 
   List<Widget> get _pages => [
     DashboardScreen(uid: uid),
     BankManagementScreen(uid: uid),
     TransactionHistoryScreen(uid: uid),
-    ProfileScreen(uid: uid),
+    ProfileScreen(uid: uid, email: email),
   ];
 
   void _onItemTapped(int index) {

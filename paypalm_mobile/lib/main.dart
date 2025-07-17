@@ -45,7 +45,8 @@ class PayPalmApp extends StatelessWidget {
         },
         '/profile': (context) {
           final uid = FirebaseAuth.instance.currentUser?.uid ?? 'uZsYmasM5B3dVXTYjt3J';
-          return ProfileScreen(uid: uid);
+          final email = FirebaseAuth.instance.currentUser?.email ?? '';
+          return ProfileScreen(uid: uid, email: email);
         },
       },
     );
