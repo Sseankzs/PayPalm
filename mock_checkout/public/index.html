@@ -1,0 +1,107 @@
+
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Merchant Checkout</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .total {
+      font-weight: bold;
+      text-align: right;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Checkout</h1>
+    <div id="items"></div>
+    <div class="total" id="total"></div>
+    <button onclick="pay()">Pay with Palm</button>
+    <button onclick="register()" style="background:#2196F3;margin-top:10px;">Register Palm</button>
+  </div>
+
+  <script>
+    const items = [
+      { name: 'Milk', price: 4.50 },
+      { name: 'Bread', price: 3.00 },
+      { name: 'Eggs', price: 5.00 },
+      { name: 'Apples', price: 6.00 },
+      { name: 'Chicken', price: 12.00 }
+    ];
+
+    const transactionId = Math.random().toString(36).substr(2, 9);
+    let total = 0;
+
+    function renderItems() {
+      const container = document.getElementById('items');
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `<span>${item.name}</span><span>RM ${item.price.toFixed(2)}</span>`;
+        container.appendChild(el);
+        total += item.price;
+      });
+      document.getElementById('total').textContent = `Total: RM ${total.toFixed(2)}`;
+    }
+
+    async function pay() {
+      const res = await fetch('/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transaction_id: transactionId, amount: total })
+      });
+      const data = await res.json();
+      alert('Payment Result: ' + JSON.stringify(data));
+    }
+
+    async function register() {
+      const res = await fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+      const data = await res.json();
+      alert('Register Result: ' + JSON.stringify(data));
+    }
+
+    renderItems();
+  </script>
+</body>
+</html>

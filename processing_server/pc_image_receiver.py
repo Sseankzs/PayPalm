@@ -1,29 +1,33 @@
-from flask import Flask, request
-import os
+from flask import Flask, request, jsonify
 import time
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return '❌ No file part in request', 400
+@app.route("/registerPalm", methods=["POST"])
+def register_palm():
+    token = request.form.get("token")
+    image = request.files.get("image")
 
-    file = request.files['file']
-    if file.filename == '':
-        return '❌ No selected file', 400
+    if not token or not image:
+        return jsonify({"error": "Missing token or image"}), 400
 
-    # Create a timestamped filename
-    timestamp = time.strftime("%Y%m%d-%H%M%S")
-    extension = os.path.splitext(file.filename)[1] or '.jpg'
-    filename = f"palm_{timestamp}{extension}"
+    print("✅ Registering palm for token:", token)
+    print("Image size (bytes):", len(image.read()))
+    time.sleep(1)
+    return jsonify({"message": "Registration OK"}), 200
 
-    filepath = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(filepath)
-    print(f"✅ File saved to {filepath}")
-    return '✅ Upload successful', 200
+@app.route("/scanPalm", methods=["POST"])
+def scan_palm():
+    token = request.form.get("token")
+    image = request.files.get("image")
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+    if not token or not image:
+        return jsonify({"error": "Missing token or image"}), 400
+
+    print("✅ Scanning palm for transaction:", token)
+    print("Image size (bytes):", len(image.read()))
+    time.sleep(1)
+    return jsonify({"message": "Payment OK"}), 200
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
