@@ -3,6 +3,7 @@ import json
 import random
 import time
 
+
 # === CONFIG ===
 BASE_URL = "https://paypalm-server.onrender.com"
 IMAGE_PATH = "uploads/palm_20250717-030033.jpg"

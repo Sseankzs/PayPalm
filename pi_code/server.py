@@ -12,6 +12,8 @@ from pyzbar.pyzbar import decode
 from picamera2 import Picamera2
 import onnxruntime as ort
 from flask_cors import CORS
+from dotenv import load_dotenv
+load_dotenv()
 
 # === Flask App Init ===
 app = Flask(__name__)
@@ -124,7 +126,7 @@ def capture_qr():
     ##backup
     ##print("[Pi-Sub-Server] Simulating QR code capture and decoding...")
     ##characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    ##user_id = "uZsYmasM5B3dVXTYjt3J"
+    ##user_id = os.getenv("ADMIN_ID")
     ##print(f"[Pi-Sub-Server] Generated simulated QR User ID: {user_id}")
     ##return user_id
 
@@ -213,7 +215,7 @@ def sub_scan_palm():
 
     files = {'image': image_file_data}
     data = {
-        'token': "uZsYmasM5B3dVXTYjt3J", # Required by main server's parsing, but content not used for merchant/amount
+        'token': os.getenv("ADMIN_ID"), # Required by main server's parsing, but content not used for merchant/amount
         'merchant': merchant,             # Actual merchant name
         'amount': amount_str              # Actual amount
     }
