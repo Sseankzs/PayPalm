@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayPalm Checkout</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for cart items */
+        .scrollable-cart::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollable-cart::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        .scrollable-cart::-webkit-scrollbar-thumb {
+            background: #a0a0a0;
+            border-radius: 10px;
+        }
+        .scrollable-cart::-webkit-scrollbar-thumb:hover {
+            background: #808080;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 w-full max-w-md">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">🛒 Checkout</h1>
+
+        <!-- Cart Items Section -->
+        <div class="mb-6 border border-gray-200 rounded-lg p-4 bg-gray-50">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Your Cart</h2>
+            <div id="cart-items" class="space-y-3 max-h-60 overflow-y-auto scrollable-cart pr-2">
+                <!-- Cart items will be dynamically inserted here -->
+            </div>
+            <div class="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center">
+                <span class="text-lg font-semibold text-gray-800">Total:</span>
+                <span id="total-amount" class="text-2xl font-bold text-indigo-600">$0.00</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-4">
+            <button id="register-button"
+                    class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold text-lg
+                           hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+                           transition ease-in-out duration-150 shadow-md hover:shadow-lg">
+                Register with PayPalm
+            </button>
+            <button id="pay-button"
+                    class="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold text-lg
+                           hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+                           transition ease-in-out duration-150 shadow-md hover:shadow-lg">
+                Pay with PayPalm
+            </button>
+        </div>
+
+        <!-- Message Display Area -->
+        <div id="message-box" class="mt-6 p-4 rounded-lg text-center hidden">
+            <!-- Messages will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Configuration for your sub-server
+        const SUB_SERVER_URL = "http://172.20.10.2:5001"; // Make sure this matches your sub-server's IP and port
+        const MERCHANT_NAME = "My Awesome Online Shop";
+
+        const cartItemsContainer = document.getElementById('cart-items');
+        const totalAmountSpan = document.getElementById('total-amount');
+        const registerButton = document.getElementById('register-button');
+        const payButton = document.getElementById('pay-button');
+        const messageBox = document.getElementById('message-box');
+
+        let currentTotal = 0;
+
+        // Function to display messages in the UI
+        function displayMessage(message, type = 'info') {
+            messageBox.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-blue-100', 'text-blue-800', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-800');
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-800');
+            } else { // info
+                messageBox.classList.add('bg-blue-100', 'text-blue-800');
+            }
+            messageBox.classList.remove('hidden');
+        }
+
+        // Function to generate random cart items
+        function generateRandomItems() {
+            const items = [
+                "Laptop", "Smartphone", "Headphones", "Keyboard", "Mouse",
+                "Monitor", "Webcam", "Microphone", "External SSD", "USB Drive",
+                "Coffee Mug", "Water Bottle", "Notebook", "Pen Set", "Backpack",
+                "T-Shirt", "Jeans", "Sneakers", "Jacket", "Socks",
+                "Book", "E-Reader", "Board Game", "Puzzle", "Art Supplies",
+                "Coffee Beans", "Tea Bags", "Snack Box", "Protein Bar", "Fruit Basket"
+            ];
+            const numItems = Math.floor(Math.random() * 4) + 2; // 2 to 5 items
+            const generatedItems = [];
+            for (let i = 0; i < numItems; i++) {
+                const itemName = items[Math.floor(Math.random() * items.length)];
+                const itemPrice = parseFloat((Math.random() * (150 - 5) + 5).toFixed(2)); // Price between $5 and $150
+                generatedItems.push({ name: itemName, price: itemPrice });
+            }
+            return generatedItems;
+        }
+
+        // Function to render cart items and calculate total
+        function renderCart() {
+            const items = generateRandomItems();
+            cartItemsContainer.innerHTML = ''; // Clear previous items
+            currentTotal = 0;
+
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex justify-between items-center text-gray-700';
+                itemDiv.innerHTML = `
+                    <span class="text-base">${item.name}</span>
+                    <span class="font-medium">$${item.price.toFixed(2)}</span>
+                `;
+                cartItemsContainer.appendChild(itemDiv);
+                currentTotal += item.price;
+            });
+
+            totalAmountSpan.textContent = `$${currentTotal.toFixed(2)}`;
+        }
+
+        // --- Event Handlers ---
+
+        // Register with PayPalm
+        registerButton.addEventListener('click', async () => {
+            displayMessage("Registering with PayPalm...", 'info');
+            try {
+                const response = await fetch(`${SUB_SERVER_URL}/registerPalm`, {
+                    method: 'POST',
+                    // No body needed as per sub-server's /registerPalm endpoint
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayMessage(`Registration successful! ${data.message || ''}`, 'success');
+                } else {
+                    displayMessage(`Registration failed: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error during registration:', error);
+                displayMessage(`Network error during registration: ${error.message}`, 'error');
+            }
+        });
+
+        // Pay with PayPalm
+        payButton.addEventListener('click', async () => {
+            displayMessage("Processing payment with PayPalm...", 'info');
+
+            const payload = {
+                merchant: MERCHANT_NAME,
+                amount: currentTotal
+            };
+
+            try {
+                const response = await fetch(`${SUB_SERVER_URL}/scanPalm`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayMessage(`Payment successful! ${data.message || ''}`, 'success');
+                } else {
+                    displayMessage(`Payment failed: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error during payment:', error);
+                displayMessage(`Network error during payment: ${error.message}`, 'error');
+            }
+        });
+
+        // Initial render of the cart when the page loads
+        document.addEventListener('DOMContentLoaded', renderCart);
+    </script>
+</body>
+</html>
