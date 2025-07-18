@@ -2,6 +2,7 @@ import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class DashboardScreen extends StatelessWidget {
   final String uid;
@@ -85,6 +86,17 @@ class DashboardScreen extends StatelessWidget {
 
               final currencyFormat = NumberFormat.currency(symbol: "RM ");
 
+              final pieSections = categoryTotals.entries.map((entry) {
+                final percent = totalSpent == 0 ? 0 : entry.value / totalSpent * 100;
+                return PieChartSectionData(
+                  value: entry.value,
+                  title: '${entry.key}\n${percent.toStringAsFixed(1)}%',
+                  color: Colors.primaries[categoryTotals.keys.toList().indexOf(entry.key) % Colors.primaries.length],
+                  radius: 60,
+                  titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                );
+              }).toList();
+
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -101,31 +113,18 @@ class DashboardScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     Text('Spending by Category', style: Theme.of(context).textTheme.titleMedium),
                     SizedBox(
-                      height: 120,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: categoryTotals.entries.map((entry) {
-                          final percent = totalSpent == 0 ? 0 : entry.value / totalSpent;
-                          return Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                  height: (80 * percent).toDouble(),
-                                  width: 24,
-                                  color: Colors.indigo,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(entry.key, style: const TextStyle(fontSize: 12)),
-                              ],
-                            ),
-                          );
-                        }).toList(),
+                      height: 200,
+                      child: PieChart(
+                        PieChartData(
+                          sections: pieSections,
+                          centerSpaceRadius: 40,
+                          sectionsSpace: 2,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
                     Text('Recent Transactions', style: Theme.of(context).textTheme.titleMedium),
-                    ...recentTransactions.map((tx) {
+                    ...recentTransactions.take(3).map((tx) {
                       final dt = (tx['timestamp'] as Timestamp).toDate();
                       final amountRaw = tx['amount'];
                       final amount = amountRaw is num
@@ -134,7 +133,7 @@ class DashboardScreen extends StatelessWidget {
                       return ListTile(
                         title: Text(tx['merchant'] ?? 'Unknown'),
                         subtitle: Text(DateFormat.yMMMd().add_jm().format(dt)),
-                        trailing: Text(currencyFormat.format(amount)), 
+                        trailing: Text(currencyFormat.format(amount)),
                       );
                     }),
                     const Spacer(),

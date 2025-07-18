@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'screens/home_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/transaction_history_screen.dart';
@@ -25,7 +26,38 @@ class PayPalmApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.indigo,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme.apply(
+                bodyColor: Colors.black87,
+                displayColor: Colors.indigo,
+              ),
+        ).copyWith(
+          titleLarge: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.indigo[900],
+          ),
+          titleMedium: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.indigo,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 14,
+            color: Colors.black54,
+          ),
+          labelLarge: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.indigo,
+          ),
+          // Add more as needed
+        ),
+        // You can also set elevatedButtonTheme, inputDecorationTheme, etc.
       ),
       home: const AuthGate(),
       routes: {
