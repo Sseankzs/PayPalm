@@ -37,15 +37,15 @@ A high-level summary of business model performance and financial sustainability.
 
 - Transaction fee: **0.05%** per transaction  
 - Min RM 0.02, Max RM 0.25 per tx  
-- Break-even by **Month 15**
+- Break-even by **Month 15**  
 - Positive monthly cash flow from **Year 2 onward**
 
-![Key Outcomes](docs/key_outcomes.png)
+<p align="center">
+  <img src="docs/key_outcomes.png" alt="Key Outcomes" />
+</p>
 
 ---
 
 ## 📁 Source
 
 These projections were generated using Claude with monthly compounding logic, adaptive team sizing, and scale-adjusted infrastructure costs. Full breakdown available upon request.
-
----
