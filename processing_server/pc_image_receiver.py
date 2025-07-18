@@ -75,11 +75,14 @@ def scan_palm():
             .collection("linkedAccounts") \
             .document(default_acc) \
             .collection("transactions")
+        
+        categories = ['All', 'Groceries', 'Food & Drink', 'Bills', 'Transport', 'Others']
+        random_category = random.choice(categories)
 
         transaction_ref.add({
             "amount": amount,
             "merchant": merchant,
-            "category": "Food & Drinks",  # Hardcoded
+            "category": random_category,
             "status": "success",
             "timestamp": firestore.SERVER_TIMESTAMP
         })
