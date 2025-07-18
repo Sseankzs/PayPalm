@@ -11,9 +11,11 @@ import numpy as np
 from pyzbar.pyzbar import decode
 from picamera2 import Picamera2
 import onnxruntime as ort
+from flask_cors import CORS
 
 # === Flask App Init ===
 app = Flask(__name__)
+CORS(app)
 
 # --- Configuration ---
 # URL of your main Flask server
@@ -42,14 +44,13 @@ def detect_palm(image):
     max_score = np.max(scores)
     return max_score >= CONFIDENCE_THRESHOLD
 def capture_palm():
-    print("🖐️ Initializing camera...")
+    print("Initializing camera...")
     picam2 = Picamera2()
     picam2.configure(picam2.create_preview_configuration(main={"size": (640, 480)}))
     picam2.start()
     
-    print("⌛ Warming up... displaying camera feed for 2 seconds")
     warmup_start = time.time()
-    while time.time() - warmup_start < 2:
+    while time.time() - warmup_start < 5:
         frame = picam2.capture_array()
         cv2.imshow("Palm Detection", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -57,16 +58,15 @@ def capture_palm():
             cv2.destroyAllWindows()
             return None
 
-    print("🔍 Starting palm detection...")
+    print("Starting palm detection...")
 
     while True:
         frame = picam2.capture_array()
         if detect_palm(frame):
-            print("✅ Palm detected! Waiting 2 seconds before capturing...")
             time.sleep(2)
             frame = picam2.capture_array()
             cv2.imwrite(PALM_IMAGE_PATH, frame)
-            print(f"📸 Image saved as {PALM_IMAGE_PATH}")
+            print(f"Image saved as {PALM_IMAGE_PATH}")
             break
 
         cv2.imshow("Palm Detection", frame)
@@ -213,7 +213,7 @@ def sub_scan_palm():
 
     files = {'image': image_file_data}
     data = {
-        'token': dummy_token_json_string, # Required by main server's parsing, but content not used for merchant/amount
+        'token': "uZsYmasM5B3dVXTYjt3J", # Required by main server's parsing, but content not used for merchant/amount
         'merchant': merchant,             # Actual merchant name
         'amount': amount_str              # Actual amount
     }
