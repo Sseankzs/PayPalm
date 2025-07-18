@@ -12,18 +12,25 @@ AMOUNT = 19.99
 def send_post(endpoint, image_path, token_dict):
     url = f"{BASE_URL}/{endpoint}"
     with open(image_path, "rb") as img_file:
-        files = {
-            "image": img_file
-        }
-        data = {
-            "token": "uZsYmasM5B3dVXTYjt3J"
-        }
+        files = {"image": img_file}
+
+        # Support both string token and dict token
+        if isinstance(token_dict, dict):
+            data = token_dict
+        else:
+            data = {"token": token_dict}
+
         print(f"🚀 Sending to {endpoint}...")
         response = requests.post(url, files=files, data=data)
         print(f"✅ {endpoint} status:", response.status_code)
-        print(f"📦 {endpoint} response:", response.json())
+        try:
+            print(f"📦 {endpoint} response:", response.json())
+        except Exception as e:
+            print("❌ Failed to parse JSON response:", e)
+            print("📦 Raw response:", response.text)
         print("-" * 40)
 
+        
 # === TEST /registerPalm ===
 register_token = "uZsYmasM5B3dVXTYjt3J"
 send_post("registerPalm", IMAGE_PATH, register_token)

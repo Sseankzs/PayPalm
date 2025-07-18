@@ -48,8 +48,8 @@ def scan_palm():
         # Parse the JSON string
         token = json.loads(token_raw)
 
-        amount = token.get("amount")
-        merchant = token.get("merchant")
+        merchant = request.form.get("merchant")
+        amount = request.form.get("amount")
 
         if not amount or not merchant:
             return jsonify({"error": "Missing amount or merchant in token"}), 400
