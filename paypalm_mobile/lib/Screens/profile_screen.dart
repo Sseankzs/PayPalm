@@ -18,10 +18,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? fullName;
   String? icNumber;
   String? email;
-  String? palmHash;
+  List<dynamic>? palmHash; 
   bool isLoading = true;
   String? sessionId;
   bool showPalmHashError = false;
+  bool? payPalmModeActive;
 
   @override
   void initState() {
@@ -31,27 +32,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _fetchUser() async {
     setState(() => isLoading = true);
-    final doc = await FirebaseFirestore.instance.collection('users').doc(widget.uid).get();
-    final data = doc.data();
-    if (data != null) {
-      fullName = data['fullName'];
-      icNumber = data['icNumber'];
-      email = data['email'] ?? widget.email;
-      palmHash = data['palmHash'];
-      if (palmHash == null) {
-        // Show error for 3 seconds if palmHash does not exist
+    try {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(widget.uid).get();
+      print('Fetched doc: ${doc.data()}');
+      final data = doc.data();
+      if (data != null) {
+        fullName = data['fullName'];
+        icNumber = data['icNumber'];
+        email = data['email'] ?? widget.email;
+        palmHash = data['palmHash'];
+        payPalmModeActive = data['payPalmModeActive'] ?? true;
+        if (palmHash == null) {
+          // Show error for 3 seconds if palmHash does not exist
+          setState(() => showPalmHashError = true);
+          Timer(const Duration(seconds: 3), () {
+            if (mounted) setState(() => showPalmHashError = false);
+          });
+        }
+      } else {
+        email = widget.email;
+        palmHash = null;
         setState(() => showPalmHashError = true);
         Timer(const Duration(seconds: 3), () {
           if (mounted) setState(() => showPalmHashError = false);
         });
       }
-    } else {
-      email = widget.email;
-      palmHash = null;
-      setState(() => showPalmHashError = true);
-      Timer(const Duration(seconds: 3), () {
-        if (mounted) setState(() => showPalmHashError = false);
-      });
+    } catch (e) {
+      print('Error: $e');
+      setState(() => isLoading = false);
     }
     setState(() => isLoading = false);
   }
@@ -117,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _payPalmModeToggle() {
-    final isOn = palmHash != null;
+    final isOn = (palmHash != null) && (payPalmModeActive ?? true); // default ON if field missing
     return Padding(
       padding: const EdgeInsets.only(top: 32.0),
       child: Row(
@@ -143,7 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onChanged: (val) async {
               setState(() => isLoading = true);
               await FirebaseFirestore.instance.collection('users').doc(widget.uid).update({
-                'palmHash': val ? 'dummyPalmHash' : null,
+                'payPalmModeActive': val,
               });
               await _fetchUser();
             },
@@ -161,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    final isPalmLinked = palmHash != null;
+    final isPalmLinked = palmHash != null && palmHash!.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(

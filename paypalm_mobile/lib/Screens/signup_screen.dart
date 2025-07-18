@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -12,8 +13,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   bool _isLoading = false;
 
-  // Replace with your actual Web client ID from Firebase Console
-  static const String _webClientId = '317425739380-4og9a3hqtamii47kmgvj9807tk834ktj.apps.googleusercontent.com';
+  String get _webClientId => dotenv.env['GOOGLE_WEB_CLIENT_ID'] ?? '';
 
   Future<User?> _signInWithGoogle() async {
     try {

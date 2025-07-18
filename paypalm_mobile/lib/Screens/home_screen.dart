@@ -16,8 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
- // String? get uid => FirebaseAuth.instance.currentUser?.uid;
-  String get uid => 'uZsYmasM5B3dVXTYjt3J';
+  String get uid => FirebaseAuth.instance.currentUser?.uid ?? '';
   String get email => FirebaseAuth.instance.currentUser?.email ?? '';
 
   List<Widget> get _pages => [

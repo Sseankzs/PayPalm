@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/home_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/transaction_history_screen.dart';
 import 'screens/financial_dashboard_screen.dart';
 import 'screens/bank_management_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/splash_screen.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
   await Firebase.initializeApp();
 
   runApp(const PayPalmApp());
@@ -55,56 +58,41 @@ class PayPalmApp extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: Colors.indigo,
           ),
-          // Add more as needed
         ),
-        // You can also set elevatedButtonTheme, inputDecorationTheme, etc.
       ),
-      home: const AuthGate(),
+      home: const SplashScreen(),
       routes: {
         '/home': (context) => const HomeScreen(),
         '/signup': (context) => const SignupScreen(),
         '/transactions': (context) {
-          final uid = FirebaseAuth.instance.currentUser?.uid ?? 'uZsYmasM5B3dVXTYjt3J';
+          final uid = FirebaseAuth.instance.currentUser?.uid;
+          if (uid == null) {
+            // Redirect to login or show error
+            return const SignupScreen();
+          }
           return TransactionHistoryScreen(uid: uid);
         },
         '/dashboard': (context) {
-          final uid = FirebaseAuth.instance.currentUser?.uid ?? 'uZsYmasM5B3dVXTYjt3J';
+          final uid = FirebaseAuth.instance.currentUser?.uid;
+          if (uid == null) {
+            return const SignupScreen();
+          }
           return DashboardScreen(uid: uid);
         },
         '/bank_management': (context) {
-          final uid = FirebaseAuth.instance.currentUser?.uid ?? 'uZsYmasM5B3dVXTYjt3J';
+          final uid = FirebaseAuth.instance.currentUser?.uid;
+          if (uid == null) {
+            return const SignupScreen();
+          }
           return BankManagementScreen(uid: uid);
         },
         '/profile': (context) {
-          final uid = FirebaseAuth.instance.currentUser?.uid ?? 'uZsYmasM5B3dVXTYjt3J';
-          final email = FirebaseAuth.instance.currentUser?.email ?? '';
-          return ProfileScreen(uid: uid, email: email);
+          final user = FirebaseAuth.instance.currentUser;
+          if (user == null) {
+            return const SignupScreen();
+          }
+          return ProfileScreen(uid: user.uid, email: user.email ?? '');
         },
-      },
-    );
-  }
-}
-
-class AuthGate extends StatelessWidget {
-  const AuthGate({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        // Show loading indicator while checking auth state
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        // If user is logged in, go to HomeScreen
-        if (snapshot.hasData && snapshot.data != null) {
-          return const HomeScreen();
-        }
-        // Else, show SignupScreen
-        return const SignupScreen();
       },
     );
   }

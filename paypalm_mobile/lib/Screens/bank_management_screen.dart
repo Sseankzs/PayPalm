@@ -40,6 +40,16 @@ class BankManagementScreen extends StatelessWidget {
           final defaultBankDocs = docs.where((d) => d['isDefault'] == true).toList();
           final otherBankDocs = docs.where((d) => d['isDefault'] != true).toList();
 
+          // Sort otherBankDocs by balance descending before displaying
+          final otherBankDocsSorted = List.from(otherBankDocs)
+            ..sort((a, b) {
+              final aData = a.data() as Map<String, dynamic>;
+              final bData = b.data() as Map<String, dynamic>;
+              final aBalance = (aData['balance'] ?? 0).toDouble();
+              final bBalance = (bData['balance'] ?? 0).toDouble();
+              return bBalance.compareTo(aBalance);
+            });
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -127,12 +137,13 @@ class BankManagementScreen extends StatelessWidget {
                 Expanded(
                   child: ListView(
                     padding: EdgeInsets.zero,
-                    children: otherBankDocs.map((doc) {
+                    children: otherBankDocsSorted.map((doc) {
                       final data = doc.data() as Map<String, dynamic>;
                       return Card(
                         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         child: ListTile(
-                          title: Text(data['bankName'] ?? 'Unknown Bank'),
+                          leading: _getBankIcon(data['bankName'] ?? ''),
+                          title: Text(data['bankName'] ?? 'Unknown Bank', style: const TextStyle(fontWeight: FontWeight.bold)),
                           subtitle: Text('${data['accountType'] ?? 'Type'}\n${currencyFormat.format(data['balance'] ?? 0)}'),
                           isThreeLine: true,
                           trailing: Row(
@@ -190,5 +201,32 @@ class BankManagementScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Widget _getBankIcon(String bankName) {
+    switch (bankName) {
+      case 'Maybank':
+        return Image.asset('assets/banks/maybank.png', width: 32, height: 32); // Add maybank.png to assets
+      case 'CIMB':
+        return Image.asset('assets/banks/cimb.png', width: 32, height: 32);
+      case 'Public Bank':
+        return Image.asset('assets/banks/publicbank.png', width: 32, height: 32);
+      case 'RHB':
+        return Image.asset('assets/banks/rhb.png', width: 32, height: 32);
+      case 'Hong Leong':
+        return Image.asset('assets/banks/hongleong.png', width: 32, height: 32);
+      case 'Ambank':
+        return Image.asset('assets/banks/ambank.png', width: 32, height: 32);
+      case 'Bank Islam':
+        return Image.asset('assets/banks/bankislam.png', width: 32, height: 32);
+      case 'UOB':
+        return Image.asset('assets/banks/uob.png', width: 32, height: 32);
+      case 'HSBC':
+        return Image.asset('assets/banks/hsbc.png', width: 32, height: 32);
+      case 'OCBC':
+        return Image.asset('assets/banks/ocbc.png', width: 32, height: 32);
+      default:
+        return const Icon(Icons.account_balance_wallet, color: Colors.grey, size: 32);
+    }
   }
 }
