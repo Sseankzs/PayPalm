@@ -16,7 +16,7 @@ def send_post(endpoint, image_path, token_dict):
             "image": img_file
         }
         data = {
-            "token": json.dumps(token_dict)
+            "token": "uZsYmasM5B3dVXTYjt3J"
         }
         print(f"🚀 Sending to {endpoint}...")
         response = requests.post(url, files=files, data=data)
@@ -26,7 +26,7 @@ def send_post(endpoint, image_path, token_dict):
 
 # === TEST /registerPalm ===
 register_token = {
-    "userId": USER_ID
+    "userId": "uZsYmasM5B3dVXTYjt3J"
 }
 send_post("registerPalm", IMAGE_PATH, register_token)
 

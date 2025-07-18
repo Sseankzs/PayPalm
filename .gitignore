@@ -10,6 +10,8 @@ firebase-debug.*.log*
 # Firebase cache
 .firebase/
 
+m-2abbf-firebase-adminsdk-fbsvc-06b57b7766.json
+
 # Firebase config
 
 # Uncomment this if you'd like others to create their own Firebase project.
