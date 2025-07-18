@@ -6,7 +6,33 @@ import time
 # === CONFIG ===
 BASE_URL = "https://paypalm-server.onrender.com"
 IMAGE_PATH = "uploads/palm_20250717-030033.jpg"
-MERCHANTS = ["BurgerLab", "Chatime", "Starbucks", "7-Eleven", "KFC", "Dominos", "Tesco", "Watsons", "Shell", "FamilyMart"]
+MERCHANTS = [
+    # 🍔 Food & Beverage
+    "McDonald's", "KFC", "BurgerLab", "Texas Chicken", "Marrybrown", "Dominos", "Pizza Hut",
+    "Subway", "Chatime", "Tealive", "Starbucks", "ZUS Coffee", "FamilyMart", "7-Eleven",
+    "OldTown White Coffee", "Mamak Corner", "Nando's", "Kenny Rogers Roasters", "Secret Recipe",
+    "Boat Noodle", "Ayamas", "Dunkin Donuts", "myBurgerLab", "Coolblog",
+
+    # 🛒 Groceries & Convenience
+    "Tesco", "Giant", "Econsave", "Mydin", "Jaya Grocer", "Village Grocer", "NSK", "Aeon Big",
+    "Billion", "HeroMarket", "Speedmart99", "Watsons", "Guardian", "Caring Pharmacy",
+
+    # 🚗 Transport & Petrol
+    "Petronas", "Shell", "Petron", "Caltex", "BHPetrol", "Grab", "RapidKL", "MyCar",
+
+    # 💡 Bills & Utilities
+    "TNB", "Syabas", "Unifi", "Maxis", "Celcom", "Digi", "Yes", "Astro", "TM",
+
+    # 🛍 Retail & Lifestyle
+    "Shopee", "Lazada", "Zalora", "MR.DIY", "MR.TOY", "BookXcess", "Popular Bookstore",
+    "Sports Direct", "Uniqlo", "H&M", "IKEA", "Decathlon",
+
+    # 🏥 Health & Wellness
+    "Guardian", "Watsons", "Caring Pharmacy", "AA Pharmacy", "BIG Pharmacy", "Alpro Pharmacy",
+
+    # 💼 Services
+    "Pos Malaysia", "J&T Express", "Lalamove", "Pgeon", "GDEX", "Klook", "AirAsia", "Malaysia Airlines"
+]
 
 # === POST FUNCTION ===
 def send_post(endpoint, image_path, token_dict):
@@ -32,7 +58,7 @@ def send_post(endpoint, image_path, token_dict):
         print("-" * 40)
 
 # === SPAM LOOP ===
-for i in range(10):
+for i in range(15):
     merchant = MERCHANTS[i % len(MERCHANTS)]
     amount = round(random.uniform(1.5, 50.0), 2)  # Random RM1.50 - RM50.00
     scan_token = {

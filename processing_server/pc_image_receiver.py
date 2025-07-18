@@ -76,7 +76,7 @@ def scan_palm():
             .document(default_acc) \
             .collection("transactions")
         
-        categories = ['All', 'Groceries', 'Food & Drink', 'Bills', 'Transport', 'Others']
+        categories = ['Groceries', 'Food & Drink', 'Bills', 'Transport', 'Others']
         random_category = random.choice(categories)
 
         transaction_ref.add({
