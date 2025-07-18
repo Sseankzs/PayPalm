@@ -1,4 +1,4 @@
-package com.example.paypalm_mobile
+package com.paypalm_mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

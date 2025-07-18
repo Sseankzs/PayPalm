@@ -1,14 +1,16 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id("com.google.gms.google-services")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+import java.util.Properties
+
 android {
-    namespace = "com.example.paypalm_mobile"
+    namespace = "com.paypalm_mobile"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973" //
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -20,25 +22,42 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.paypalm_mobile"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        applicationId = "com.paypalm_mobile"
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            val props = Properties()
+            project.rootProject.file("local.properties").inputStream().use { props.load(it) }
+
+            val keystorePathValue = props["KEYSTORE_PATH"] ?: throw GradleException("KEYSTORE_PATH is missing in local.properties")
+            val keystorePasswordValue = props["KEYSTORE_PASSWORD"] ?: throw GradleException("KEYSTORE_PASSWORD is missing in local.properties")
+            val keyAliasValue = props["KEY_ALIAS"] ?: throw GradleException("KEY_ALIAS is missing in local.properties")
+            val keyPasswordValue = props["KEY_PASSWORD"] ?: throw GradleException("KEY_PASSWORD is missing in local.properties")
+
+            storeFile = file(keystorePathValue as String)
+            storePassword = keystorePasswordValue as String
+            keyAlias = keyAliasValue as String
+            keyPassword = keyPasswordValue as String
+        }
+    }
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
 }
