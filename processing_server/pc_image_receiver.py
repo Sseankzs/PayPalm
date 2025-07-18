@@ -29,7 +29,7 @@ def register_palm():
 
     try:
         vector = GenerateVector()
-        db.collection("users").document(token).set({"palmHash": vector})
+        db.collection("users").document(token).update({"palmHash": vector})
         print(f"✅ Registered vector for {token}")
         return jsonify({"message": "Registration OK"}), 200
     except Exception as e:
