@@ -1,7 +1,7 @@
 # ✋ PayPalm – Device-Free Payments
 
 A palm biometric payment system that works without phones, cards, or wallets — just your hand.  
-Built during **PayHack 2025** by **Team 3 Peas**.
+Built during **PayNet 2025** by **Team 3 Peas**.
 
 ---
 
