@@ -35,6 +35,7 @@ def register_palm():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/scanPalm", methods=["POST"])
 def scan_palm():
     try:
@@ -78,7 +79,7 @@ def scan_palm():
         transaction_ref.add({
             "amount": amount,
             "merchant": merchant,
-            "category": "Food",  # Hardcoded
+            "category": "Food & Drinks",  # Hardcoded
             "status": "success",
             "timestamp": firestore.SERVER_TIMESTAMP
         })
