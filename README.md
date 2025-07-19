@@ -8,11 +8,7 @@ Built during **PayNet 2025** by **Team 3 Peas**.
 - [Features](#features)
 - [Setup Instructions](#setup-instructions)
 - [How It Works](#how-it-works)
-- [System Architecture](#system-architecture)
-- [Demo](#demo)
 - [Tech Stack](#tech-stack)
-- [Troubleshooting](#troubleshooting)
-- [Future Plans](#future-plans)
 - [License](#license)
 
 ---
@@ -46,8 +42,11 @@ Install dependencies
 checkout.html
 
 # Clone and run the mobile app
-[User App Screens & Features](./paypalm_mobile/README.md)  
 ```
+## 📖 Learn More
+- [Financial Projections & Charts](./Paypalm_Financial_Projections/README.md)
+- [User App Screens & Features](./paypalm_mobile/README.md)
+
 ## How It Works
 1. Merchant app sends a request to the Pi server (/register or /scanPalm).
 
@@ -60,7 +59,6 @@ checkout.html
 5. Server sends back result (success/failure).
 
 ## Tech Stack
-🛠 Tech Stack
 - Raspberry Pi 5
 - Python 3.10
 - Flask
@@ -75,8 +73,7 @@ checkout.html
 - [@MclarenFrankl1n](https://github.com/MclarenFrankl1n)  
 - [@huiying888](https://github.com/huiying888)
 
-## 📖 Learn More
-- 📊 [Financial Projections & Charts](./Paypalm_Financial_Projections/README.md)
+
 
 ## License
 MIT License — free to use and modify.
